@@ -1,0 +1,64 @@
+from socket import *
+import threading
+import hashlib
+
+locaal_host="127.0.0.1"
+port_number=5555
+server_socket=socket()
+server_socket.bind((locaal_host,port_number))
+server_socket.listen(10)
+client_counter=0
+
+def client_thread(client_thread,client_add) :
+    print("new client is connectted  and the address is :")
+    print(client_add,client_counter)
+    words = ""
+    while True:
+        msg_rec=client_socket.recv(2048).decode()
+        if msg_rec=="exit":
+            break
+        elif msg_rec=="download-student-number":
+                with open('new1.txt', 'r') as file:
+                    # reading each line
+                    for line in file:
+                        # reading each word
+                        for word in line.split():
+                            words = words + word + " "
+                client_socket.send(words.encode())
+                print(words)
+
+        elif msg_rec == "download-student-digree":
+            with open('new2.txt', 'r') as file:
+                # reading each line
+                for line in file:
+                    # reading each word
+                    for word in line.split():
+                        words = words + word + " "
+            client_socket.send(words.encode())
+            print(words)
+
+        elif msg_rec == "download-student-classes":
+            with open('new3.txt', 'r') as file:
+                # reading each line
+                for line in file:
+                    # reading each word
+                    for word in line.split():
+                        words = words + word + " "
+            client_socket.send(words.encode())
+            print(words)
+
+        elif msg_rec=="yes":
+            h = hashlib.md5(words.encode('utf-8')).hexdigest()
+
+            client_socket.send(h.encode())
+        elif msg_rec=="no":
+            break
+
+
+
+while True:
+    print("the server is waitting ....")
+    (client_socket,client_add)=server_socket.accept()
+    new_thread=threading.Thread(target=client_thread,args=(client_socket,client_add))
+    client_counter+=1
+    new_thread.start()
