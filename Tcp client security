@@ -1,0 +1,39 @@
+import hashlib
+from socket import*
+client_socket=socket()
+client_socket.connect(("127.0.0.1",5555))
+   #  user_input1=input("enterd your name for login in server ")
+   #  client_socket.send(user_input1)
+user_input2=input("enter your name :")
+client_socket.send(user_input2.encode())
+i=0
+while True :
+
+     user_input3=input("enter what do you want from server and enter exit for finish :   ")
+     i+=1
+     client_socket.send(user_input3.encode())
+     if user_input3=="exit":
+         break
+
+     server_file=client_socket.recv(1024).decode()
+     print("the file recived from server is : ",server_file)
+     user_input4=input(" do you the results of hash function for security : ")
+     client_socket.send(user_input4.encode())
+     server_data = client_socket.recv(1024).decode()
+     if(user_input4 == "yes"):
+        print(server_data)
+        h = hashlib.md5(server_file.encode('utf-8')).hexdigest()
+        print(h)
+
+     else:
+        print("exit")
+     if (server_data==h):
+         print("the file is true and the data recived is true ")
+     else :
+         print("the file is not correct")
+
+
+
+
+print("connection is finish ")
+client_socket.close()
